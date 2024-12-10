@@ -74,17 +74,40 @@ def test_get_books_with_specific_genre_no_matches(collector):
     assert collector.get_books_with_specific_genre("Фантастика") == []
 
 
-# Тестирование метода delete_book_from_favorites
-def test_delete_book_from_favorites_existing(collector):
+# Тестирование метода get_books_genre
+def test_get_books_genre_empty(collector):
+    assert collector.get_books_genre() == {}
+
+
+def test_get_books_genre_with_books(collector):
     collector.add_new_book("Book 1")
-    collector.add_book_in_favorites("Book 1")
-    collector.delete_book_from_favorites("Book 1")
-    assert "Book 1" not in collector.favorites
+    collector.set_book_genre("Book 1", "Фантастика")
+    collector.add_new_book("Book 2")
+    collector.set_book_genre("Book 2", "Ужасы")
+
+    expected = {
+        "Book 1": "Фантастика",
+        "Book 2": "Ужасы"
+    }
+    assert collector.get_books_genre() == expected
 
 
-def test_delete_book_from_favorites_non_existing(collector):
-    collector.delete_book_from_favorites("Book 1")
-    assert len(collector.favorites) == 0
+# Тестирование метода get_books_for_children
+def test_get_books_for_children_empty(collector):
+    assert collector.get_books_for_children() == []
+
+
+def test_get_books_for_children_with_books(collector):
+    collector.add_new_book("Book 1")
+    collector.set_book_genre("Book 1", "Фантастика")
+    collector.add_new_book("Book 2")
+    collector.set_book_genre("Book 2", "Ужасы")
+    collector.add_new_book("Book 3")
+    collector.set_book_genre("Book 3", "Детективы")
+    collector.add_new_book("Book 4")
+    collector.set_book_genre("Book 4", "Мультфильмы")
+
+    assert collector.get_books_for_children() == ["Book 1", "Book 4"]
 
 
 # Тестирование метода add_book_in_favorites
@@ -99,6 +122,19 @@ def test_add_book_in_favorites_duplicate(collector):
     collector.add_book_in_favorites("Book 1")
     collector.add_book_in_favorites("Book 1")
     assert collector.favorites.count("Book 1") == 1
+
+
+# Тестирование метода delete_book_from_favorites
+def test_delete_book_from_favorites_existing(collector):
+    collector.add_new_book("Book 1")
+    collector.add_book_in_favorites("Book 1")
+    collector.delete_book_from_favorites("Book 1")
+    assert "Book 1" not in collector.favorites
+
+
+def test_delete_book_from_favorites_non_existing(collector):
+    collector.delete_book_from_favorites("Book 1")
+    assert len(collector.favorites) == 0
 
 
 # Тестирование метода get_list_of_favorites_books
